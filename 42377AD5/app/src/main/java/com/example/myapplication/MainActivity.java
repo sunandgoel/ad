@@ -1,82 +1,84 @@
 package com.example.myapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
-import android.content.Intent;
-import android.widget.EditText;
-import java.util.ArrayList;
-
+import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        EditText name=findViewById(R.id.editTextTextPersonName);
-        RadioGroup gender=findViewById(R.id.radioGroup);
-        Spinner subject=findViewById(R.id.spinner);
-        Button reg=findViewById(R.id.button);
-        CheckBox ch1=findViewById(R.id.checkBox);
-        CheckBox ch2=findViewById(R.id.checkBox2);
-        Intent intent= new Intent(MainActivity.this,ShowActivity.class);
+        TextView textView=findViewById(R.id.textView);
+        registerForContextMenu(textView);
+        Button diag=findViewById(R.id.button2);
 
-        ArrayList<String> sub=new ArrayList<>();
-        sub.add("Android Development");
-        sub.add("Fiber Optic Communication");
-
-        ArrayAdapter<String> subada=new ArrayAdapter<>(MainActivity.this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,sub);
-
-        subject.setAdapter(subada);
-
-        subject.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String msg = "Subject : " + sub.get(i);
-                intent.putExtra("sub",msg);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        gender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int i) {
-                int selid=radioGroup.getCheckedRadioButtonId();
-                RadioButton radioButton=findViewById(selid);
-                String msg = "Gender : " + radioButton.getText().toString();
-                intent.putExtra("gend",msg);
-            }
-        });
-
-
-
-        reg.setOnClickListener(new View.OnClickListener() {
+        diag.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String msg = "Qualification : ";
-                if(ch1.isChecked())
-                    msg = msg + " B.E. ";
-                if(ch2.isChecked())
-                    msg = msg + " M.E. ";
-                String msg2 = "Name : " + name.getText().toString();
-                intent.putExtra("name",msg2);
-                intent.putExtra("qualification", msg);
-                startActivity(intent);
+                exampledialog diag1=new exampledialog();
+                diag1.show(getSupportFragmentManager(),"example_dialog");
             }
         });
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.context_menu,menu);
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()){
+
+            case R.id.item1:
+                Toast.makeText(MainActivity.this,"item1 selected",Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+
+        }
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater=getMenuInflater();
+        menuInflater.inflate(R.menu.option_menu,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    public void Showpopup(View view) {
+        PopupMenu popupMenu=new PopupMenu(MainActivity.this,view);
+        popupMenu.inflate(R.menu.popup_menu);
+        popupMenu.show();
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                return false;
+            }
+        });
     }
 }
